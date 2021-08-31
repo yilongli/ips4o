@@ -65,6 +65,7 @@ namespace detail {
  */
 template <class Cfg>
 void Sorter<Cfg>::processSmallTasks(const iterator begin, int num_threads) {
+    (void)num_threads;
     auto& scheduler = shared_->scheduler;
     auto& my_queue = local_.seq_task_queue;
     Task task;
@@ -185,6 +186,7 @@ void Sorter<Cfg>::setShared(SharedData* shared) {
  */
 template <class Cfg>
 void Sorter<Cfg>::processBigTasksSecondary(const int id, BufferStorage& buffer_storage) {
+    (void)buffer_storage;
     BigTask& task = shared_->big_tasks[id];
     auto partial_thread_pool = shared_->thread_pools[task.root_thread];
 
@@ -281,6 +283,7 @@ std::pair<std::vector<typename Cfg::difference_type>, bool>
 Sorter<Cfg>::parallelPartitionPrimary(const iterator begin, const iterator end,
                                       const int num_threads) {
     const auto size = end - begin;
+    (void)size;
 
     const auto res = partition<true>(begin, end, shared_->bucket_start, 0, num_threads);
     const int num_buckets = std::get<0>(res);
@@ -395,6 +398,7 @@ class ParallelSorter {
 
         // Set up base data before switching to parallel mode
         auto& shared = shared_ptr_.get();
+        (void)shared;
 
         // Execute in parallel
         thread_pool_(
