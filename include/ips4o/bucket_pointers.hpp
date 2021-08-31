@@ -60,7 +60,9 @@ class Sorter<Cfg>::BucketPointers {
 
 #elif defined(__SIZEOF_INT128__)
 
-    using atomic_type = unsigned __int128;
+    // __extension__ suppresses the pedantic warning about __int128
+    // not being ISO C++ compliant
+    __extension__ using atomic_type = unsigned __int128;
 
 #endif  // defined( __SIZEOF_INT128__)
 
