@@ -64,7 +64,7 @@ namespace detail {
  * Processes sequential subtasks in the parallel algorithm.
  */
 template <class Cfg>
-void Sorter<Cfg>::processSmallTasks(const iterator begin, int num_threads) {
+void Sorter<Cfg>::processSmallTasks(const iterator begin) {
     auto& scheduler = shared_->scheduler;
     auto& my_queue = local_.seq_task_queue;
     Task task;
@@ -167,7 +167,7 @@ void Sorter<Cfg>::processBigTasks(const iterator begin, const diff_t stripe, con
             // required.
             processBigTaskPrimary(begin, stripe, id, buffer_storage, tp_trash);
         } else {
-            processBigTasksSecondary(id, buffer_storage);
+            processBigTasksSecondary(id);
         }
     }
 }
@@ -184,7 +184,7 @@ void Sorter<Cfg>::setShared(SharedData* shared) {
  * Process a big task with multiple threads in the parallel algorithm.
  */
 template <class Cfg>
-void Sorter<Cfg>::processBigTasksSecondary(const int id, BufferStorage& buffer_storage) {
+void Sorter<Cfg>::processBigTasksSecondary(const int id) {
     BigTask& task = shared_->big_tasks[id];
     auto partial_thread_pool = shared_->thread_pools[task.root_thread];
 
@@ -280,7 +280,6 @@ template <class Cfg>
 std::pair<std::vector<typename Cfg::difference_type>, bool>
 Sorter<Cfg>::parallelPartitionPrimary(const iterator begin, const iterator end,
                                       const int num_threads) {
-    const auto size = end - begin;
 
     const auto res = partition<true>(begin, end, shared_->bucket_start, 0, num_threads);
     const int num_buckets = std::get<0>(res);
@@ -310,7 +309,7 @@ void Sorter<Cfg>::parallelSortSecondary(
 
     const auto stripe = ((end - begin) + num_threads - 1) / num_threads;
     processBigTasks(begin, stripe, id, buffer_storage, tp_trash);
-    processSmallTasks(begin, num_threads);
+    processSmallTasks(begin);
 }
 
 /**
@@ -338,7 +337,7 @@ void Sorter<Cfg>::parallelSortPrimary(
     shared_->sync.barrier();
 
     processBigTasks(begin, stripe, 0, buffer_storage, tp_trash);
-    processSmallTasks(begin, num_threads);
+    processSmallTasks(begin);
 }
 
 }  // namespace detail
@@ -394,7 +393,7 @@ class ParallelSorter {
         }
 
         // Set up base data before switching to parallel mode
-        auto& shared = shared_ptr_.get();
+        // auto& shared = shared_ptr_.get();
 
         // Execute in parallel
         thread_pool_(

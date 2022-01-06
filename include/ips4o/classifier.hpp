@@ -126,7 +126,7 @@ class Sorter<Cfg>::Classifier {
   template <bool kEqualBuckets, class Yield, int...Args>
   void classifySwitch(iterator begin, iterator end, Yield&& yield,
 		      std::integer_sequence<int, Args...>) const {
-    IPS4OML_ASSUME_NOT(log_buckets_ <= 0 && log_buckets_ >= sizeof...(Args));
+    IPS4OML_ASSUME_NOT(log_buckets_ <= 0 && log_buckets_ >= static_cast<int>(sizeof...(Args)));
     ((Args == log_buckets_ &&
       classifyUnrolled<kEqualBuckets, Args>(begin, end, std::forward<Yield>(yield)))
      || ...);
