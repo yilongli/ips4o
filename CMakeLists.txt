@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
+# The accompanying FindTBB.cmake under extern/cmake-modules/ is too old to work
+# with the new TBB. For simplicity, just stick to a specific version of oneTBB.
+include(cmake/CPM.cmake)
+CPMAddPackage("gh:oneapi-src/oneTBB@2021.7.0")
+
 project(ips4o)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -44,7 +49,6 @@ if (NOT IPS4O_DISABLE_PARALLEL)
   target_link_libraries(ips4o INTERFACE Threads::Threads)
 
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/extern/cmake-modules)
-  find_package(TBB REQUIRED)
   target_link_libraries(ips4o INTERFACE TBB::tbb)
 
   target_link_libraries(ips4o INTERFACE atomic)

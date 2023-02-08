@@ -35,4 +35,17 @@
 
 #pragma once
 
+// The source code of ips4o use the obsolete `_REENTRANT` macro everywhere
+// to guard its parallel implementation. This is problematic for me because
+// the thread functions are often provided by the system libraries nowadays
+// and no special flags (e.g., `-pthread`) are needed to use them. Without
+// `-pthread`, `_REENTRANT` is not defined; this can be verified with the
+// following commands:
+//   gcc -dM -E - -pthread </dev/null | grep _REENTRANT
+//   gcc -dM -E - </dev/null | grep _REENTRANT
+//
+// It's awkward to force cmake to add `-pthread`; as a quick hack, just define
+// `_REENTRANT` explicitly.
+#define _REENTRANT 1
+
 #include "ips4o/ips4o.hpp"
