@@ -3,7 +3,15 @@ cmake_minimum_required(VERSION 3.10)
 # The accompanying FindTBB.cmake under extern/cmake-modules/ is too old to work
 # with the new TBB. For simplicity, just stick to a specific version of oneTBB.
 include(cmake/CPM.cmake)
-CPMAddPackage("gh:oneapi-src/oneTBB@2021.7.0")
+CPMAddPackage(
+  NAME oneTBB
+  GITHUB_REPOSITORY oneapi-src/oneTBB
+  GIT_TAG v2021.7.0
+  # Suppress the warnings given by recent versions of gcc.
+  # This is a known issue of oneTBB:
+  #   https://github.com/oneapi-src/oneTBB/issues/823
+  OPTIONS "TBB_TEST OFF" "TBB_STRICT OFF"
+)
 
 project(ips4o)
 
